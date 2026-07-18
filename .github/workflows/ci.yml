@@ -16,4 +16,9 @@ jobs:
       - run: uv sync --locked
       - run: uv run ruff check .
       - run: uv run mypy src
-      - run: uv run pytest -q
+      - run: uv run pytest -q --cov=capdisc --cov-report=xml --cov-report=term-missing
+      - uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: false
