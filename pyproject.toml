@@ -1,9 +1,22 @@
 [project]
 name = "capdisc"
-version = "0.1.0"
+version = "0.1.1"
 description = "Discovers Claude Code capabilities — skills, agents, plugins, MCP servers, hooks — into typed catalogs and an environment report."
+readme = "README.md"
 license = "MIT"
 requires-python = ">=3.12"
+authors = [{ name = "Magic-Man-us" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
 dependencies = [
     "fastmcp>=3.4.4",
     "py-key-value-aio[filetree]>=0.4.5",
@@ -11,6 +24,10 @@ dependencies = [
     "pydantic-settings>=2.14.2",
     "pyyaml>=6.0.3",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Magic-Man-us/capability-discovery"
+Repository = "https://github.com/Magic-Man-us/capability-discovery"
 
 [project.scripts]
 capdisc = "capdisc.report:main"
