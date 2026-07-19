@@ -52,7 +52,7 @@ jobs:
       - if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v7
         with:
-          slug: Magic-Man-us/claude-code-capabilities
+          slug: magic-man-us/claude-code-capabilities
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           flags: python-${{ matrix.python-version }}
@@ -60,7 +60,7 @@ jobs:
       - if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v7
         with:
-          slug: Magic-Man-us/claude-code-capabilities
+          slug: magic-man-us/claude-code-capabilities
           token: ${{ secrets.CODECOV_TOKEN }}
           files: junit.xml
           report_type: test_results
