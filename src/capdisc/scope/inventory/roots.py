@@ -153,7 +153,16 @@ class ScopeRoots(FrozenModel):
                     kinds=_STANDALONE_KINDS,
                 )
             )
-        roots += [ScanRoot(scope=ScopeKind.project, base=base) for base in _project_bases(start)]
+        # Launched from the home directory itself (cwd = ~), the walk-up finds `~/.claude`
+        # and would label it project scope while the same physical directory is also added
+        # as the user root below — double-capturing every artifact it holds. The user root
+        # is the true owner; drop the project-scope alias.
+        user_claude = (home_dir / ".claude").resolve() if home_dir is not None else None
+        roots += [
+            ScanRoot(scope=ScopeKind.project, base=base)
+            for base in _project_bases(start)
+            if base.resolve() != user_claude
+        ]
         roots += [
             ScanRoot(scope=ScopeKind.project, base=base, kinds=frozenset({ArtifactKind.skill}))
             for base in _nested_skill_bases(start)
@@ -164,6 +173,8 @@ class ScopeRoots(FrozenModel):
         seen_project_bases = {
             root.base.resolve() for root in roots if root.scope == ScopeKind.project
         }
+        if user_claude is not None:
+            seen_project_bases.add(user_claude)
         for add in add_dirs:
             claude_dir = (add / ".claude").resolve()
             if claude_dir.is_dir() and claude_dir not in seen_project_bases:

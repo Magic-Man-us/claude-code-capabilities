@@ -24,6 +24,24 @@ def test_precedence_flips_by_kind(tmp_path: Path) -> None:
     assert _effective_scope(inv, ArtifactKind.agent, "foo") is ScopeKind.project  # subagents invert
 
 
+def test_home_launch_does_not_double_scan_user_claude(tmp_path: Path) -> None:
+    # Launched from the home directory itself (cwd = ~): `~/.claude` is the user root and
+    # must not also be captured as project scope, or every artifact in it lists twice.
+    home = tmp_path / "home"
+    standalone_set(home / ".claude")
+    roots = ScopeRoots.discover(start=home, home_dir=home)
+
+    target = (home / ".claude").resolve()
+    labelled = [(root.scope, Path(root.base).resolve()) for root in roots.roots]
+    assert (ScopeKind.user, target) in labelled
+    assert (ScopeKind.project, target) not in labelled
+
+    inv = ScopeInventory.scan(roots)
+    commands = [c for c in inv.artifacts if c.kind is ArtifactKind.command and c.name == "foo"]
+    assert len(commands) == 1
+    assert commands[0].scope is ScopeKind.user
+
+
 def test_command_has_no_managed_scope(tmp_path: Path) -> None:
     repo, managed = tmp_path / "repo", tmp_path / "managed"
     (repo / ".git").mkdir(parents=True)
